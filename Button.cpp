@@ -19,7 +19,7 @@ Button::Button(uint8_t buttonPin, uint8_t buttonMode, uint16_t _debounceDuration
 
 void Button::init(uint8_t buttonPin, uint8_t buttonMode, uint16_t _debounceDuration)
 {
-	myPin = buttonPin;
+  myPin = buttonPin;
   mode = buttonMode;
   state = 0;
   holdEventThreshold = DEFAULT_HOLD_TIME;
@@ -28,7 +28,12 @@ void Button::init(uint8_t buttonPin, uint8_t buttonMode, uint16_t _debounceDurat
   pressedStartTime = 0;
 
   if (myPin != 255) {
-    pinMode(myPin, INPUT);
+    
+    if (mode == HIGH)
+      pinMode(myPin, INPUT_PULLUP);
+    else
+      pinMode(myPin, INPUT);
+
     bitWrite(state, BIT_CURRENT, (digitalRead(myPin) == mode));
 
   #ifdef DEBUG_SERIAL
@@ -48,14 +53,18 @@ void Button::process(void)
     // not enough time has passed; ignore
     return;
   }
+      
+  #ifdef DEBUG_SERIAL
+  Serial.println("Button process.");
+  #endif
 
   // save the previous value
   bitWrite(state, BIT_PREVIOUS, bitRead(state, BIT_CURRENT));
-  
+
   if (bitRead(state, BIT_TEST_MODE))
     bitWrite(state, BIT_CURRENT, bitRead(state, BIT_TEST_PRESSED));
   else
-    bitWrite(state, BIT_CURRENT, (digitalRead(myPin) == mode));
+    bitWrite(state, BIT_CURRENT, (digitalRead(myPin) != mode));
 
   // clear the hold, if it was set.
   bitWrite(state, BIT_HOLD_NOW, false);
@@ -69,28 +78,28 @@ void Button::process(void)
       Serial.println("Button press.");
       #endif
 
-      if (handlers && handlers->cb_onPress) { 
-        handlers->cb_onPress(*this); 
+      if (handlers && handlers->cb_onPress) {
+        handlers->cb_onPress(*this);
       }
       pressedStartTime = currentMillis;        //start timing
       bitWrite(state, BIT_HOLD_TRIGGERED, false);
       bitWrite(state, BIT_HOLD_NOW, false);
-    } 
+    }
     else {
       // Released.
       #ifdef DEBUG_SERIAL
       Serial.println("Button release.");
       #endif
 
-      if (handlers && handlers->cb_onRelease) { 
-        handlers->cb_onRelease(*this); 
+      if (handlers && handlers->cb_onRelease) {
+        handlers->cb_onRelease(*this);
       }
       // Don't fire both hold and click.
       if (!bitRead(state, BIT_HOLD_TRIGGERED)) {
         #ifdef DEBUG_SERIAL
         Serial.println("Button click.");
         #endif
-        if (handlers && handlers->cb_onClick) { 
+        if (handlers && handlers->cb_onClick) {
           handlers->cb_onClick(*this);    //fire the onClick event AFTER the onRelease
         }
       }
@@ -104,10 +113,10 @@ void Button::process(void)
     bitWrite(state, BIT_CHANGED, false);
 
     // should we trigger an onHold event? If so - only trigger one!
-    if (isDown() && !bitRead(state, BIT_HOLD_TRIGGERED)) 
+    if (isDown() && !bitRead(state, BIT_HOLD_TRIGGERED))
     {
-      if (pressedStartTime && (currentMillis - pressedStartTime > uint32_t(holdEventThreshold))) 
-      { 
+      if (pressedStartTime && (currentMillis - pressedStartTime > uint32_t(holdEventThreshold)))
+      {
         #ifdef DEBUG_SERIAL
         Serial.print("Button hold. startTime=");
         Serial.print(pressedStartTime);
@@ -118,7 +127,7 @@ void Button::process(void)
         bitWrite(state, BIT_HOLD_NOW, true);
         if (handlers && handlers->cb_onHold) {
           handlers->cb_onHold(*this);
-        } 
+        }
       }
     }
   }
@@ -145,7 +154,7 @@ bool Button::press() const
 
 bool Button::held() const
 {
-  return isDown() && bitRead(state, BIT_HOLD_NOW); 
+  return isDown() && bitRead(state, BIT_HOLD_NOW);
 }
 
 
@@ -157,9 +166,9 @@ uint32_t Button::holdTime() const
 }
 
 
-void Button::setHoldThreshold(uint32_t holdTime) 
-{ 
-  holdEventThreshold = holdTime; 
+void Button::setHoldThreshold(uint32_t holdTime)
+{
+  holdEventThreshold = holdTime;
 }
 
 void Button::enableTestMode(bool testMode)

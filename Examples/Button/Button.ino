@@ -4,7 +4,7 @@
 
 #include <Button.h>
 
-#define PIN 8
+#define PIN 2
 #define PULL Button::PULL_UP
 
 Button button(PIN, PULL);
@@ -20,10 +20,15 @@ void loop() {
 
   if (button.press()) {
     Serial.println("LOG: Press");
+    digitalWrite(13, HIGH);
+  }
+  else 
+  {
+        digitalWrite(13, LOW);
   }
   if (button.held()) {
     Serial.println("LOG: Held");
   }
-  digitalWrite(13, button.isDown());
+  //digitalWrite(13, button.isDown());
 }
  
