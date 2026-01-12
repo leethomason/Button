@@ -9,17 +9,17 @@
 #define BIT_TEST_MODE       5
 #define BIT_TEST_PRESSED    6
 
-Button::Button(uint8_t buttonPin, uint8_t buttonMode, uint16_t _debounceDuration)
+Button::Button(uint8_t buttonPin, Wiring resistor, uint16_t _debounceDuration)
 {
     m_handlers = 0;
-    init(buttonPin, buttonMode, _debounceDuration);
+    init(buttonPin, resistor, _debounceDuration);
 }
 
 bool Button::queryButtonDown() const
 {
     int pinState = digitalRead(m_myPin);
     bool down = false;
-    if (m_mode == PULL_DOWN) {
+    if (m_wiring == Wiring::pullDown) {
         down = (pinState == HIGH);
     }
     else {
@@ -29,20 +29,20 @@ bool Button::queryButtonDown() const
     return down;
 }
 
-void Button::init(uint8_t buttonPin, uint8_t buttonMode, uint16_t _debounceDuration)
+void Button::init(uint8_t buttonPin, Wiring resistor, uint16_t _debounceDuration)
 {
     m_holdRepeats = false;
     m_nHolds = 0;
     m_myPin = buttonPin;
-    m_mode = buttonMode;
+    m_wiring = resistor;
     m_state = 0;
-    m_holdEventThreshold = DEFAULT_HOLD_TIME;
+    m_holdEventThreshold = kDefaultHoldTime;
     m_debounceDuration = _debounceDuration;
     m_debounceStartTime = 0;
     m_pressedStartTime = 0;
 
     if (m_myPin != 255) {
-        if (m_mode == INTERNAL_PULLUP) {
+        if (m_wiring == Wiring::internalPullUp) {
             pinMode(m_myPin, INPUT_PULLUP);
         }
         else {

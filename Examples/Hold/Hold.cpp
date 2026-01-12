@@ -6,7 +6,7 @@
 #include <Arduino.h>
 
 
-ButtonCB button(12, Button::INTERNAL_PULLUP);
+ButtonCB button(12, Button::Wiring::internalPullUp);
 
 void onPress(const Button&) {
   Serial.println("Press.");
