@@ -10,7 +10,7 @@
    - A PULL_UP resistor is tied to Vcc, and the button connects to LOW on close.
    - An INTERNAL_PULLUP uses the internal resistor, and the button connects to LOW on close.
 */
-ButtonCB button(12, Button::INTERNAL_PULLUP);
+ButtonCB button(12, Button::Wiring::internalPullUp);
 
 void doPressHandler(const Button& button) {
   Serial.print("LOG: doPressHandler ");

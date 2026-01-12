@@ -187,25 +187,25 @@ void Button::testRelease()
 }
 
 
-void ButtonCB::setPressHandler(buttonEventHandler handler)
+void ButtonCB::setPressHandler(ButtonEventHandler handler)
 {
     m_handlerData.cb_onPress = handler;
 }
 
 
-void ButtonCB::setReleaseHandler(buttonEventHandler handler)
+void ButtonCB::setReleaseHandler(ButtonEventHandler handler)
 {
     m_handlerData.cb_onRelease = handler;
 }
 
 
-void ButtonCB::setClickHandler(buttonEventHandler handler)
+void ButtonCB::setClickHandler(ButtonEventHandler handler)
 {
     m_handlerData.cb_onClick = handler;
 }
 
 
-void ButtonCB::setHoldHandler(buttonEventHandler handler)
+void ButtonCB::setHoldHandler(ButtonEventHandler handler)
 {
     m_handlerData.cb_onHold = handler;
 }

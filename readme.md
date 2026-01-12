@@ -2,79 +2,79 @@
 
 The Button library for Arduino makes common button tasks simple, filters
 out mechanical noise, and adds some handy extra features. Solid, dependable,
-and easy to use button handling is surprisingly difficult, and this 
+and easy to use button handling is surprisingly difficult, and this
 library is here to help.
 
 ## Features
 
-* De-bouncing. Mechanical buttons physically vibrate - bounce - when
+* Debouncing. Mechanical buttons physically vibrate (bounce) when
   they are first pressed or released. This creates spurious state changes
-  that need to be filtered or "de-bounced".
-* Support for pull-up, pull-down, or internal-pull-up configurations. 
-  * A pull-down button is tied to ground with a resistor (usually about
-    10k), so the pin is normally LOW. When it closes, the button connects
-    to Vcc and goes HIGH.
-  * A pull-up button is normally tied to positive with a resistor (usually
-    10k), so the pin is normally HIGH. When it closes, the button connects
-    to ground and goes LOW.
-  * An internal-pull-up button is just like the pull-up, but uses an internal
-    resistor on the Arduino. These are very convenient to use, as the button
-    just needs to close the connection to ground.
+  that need to be filtered or "debounced".
+* Support for pull-up, pull-down, or internal pull-up configurations:
+  * A pull-down button is tied to ground with a resistor (typically 10kΩ),
+    so the pin reads LOW normally. When pressed, the button connects to VCC
+    and the pin reads HIGH.
+  * A pull-up button is tied to VCC with a resistor (typically 10kΩ),
+    so the pin reads HIGH normally. When pressed, the button connects to
+    ground and the pin reads LOW.
+  * An internal pull-up button works like a pull-up configuration but uses
+    the Arduino's internal resistor. These are convenient as the button only
+    needs to connect to ground when pressed.
 
-* Queries for 'press', 'down', and 'held'. Queries are checked after the `process()`
-  method is called.
+* Query methods for 'press', 'down', and 'held' states. Queries are checked after
+  the `process()` method is called:
 
-	* `press()` is true when a button is first pressed down.
-	* `isDown()` returns true if the button is down. (When a button is initially
-	   pressed both 'press' and 'isDown' will return true. Subsequent queries
-	   to a down button result in 'press' false and `isDown` true.)
-	* `held()` is true if the button has hit the holdThreshold in this loop.
+	* `press()` returns true when a button is first pressed down (edge detection).
+	* `isDown()` returns true while the button is currently pressed. (When a button
+	  is initially pressed, both `press()` and `isDown()` will return true. On
+	  subsequent calls while the button remains down, `press()` returns false and
+	  `isDown()` returns true.)
+	* `held()` returns true if the button has been held longer than the hold threshold.
 
-* Callacks for press, hold, release, and click. Callbacks are called 
-  from the `process()` method. Callbacks are generally easier for more
-  complex button handling (doing something different on hold vs click, for
-  example.)
+* Callbacks for press, hold, release, and click events. Callbacks are invoked
+  from the `process()` method. Callbacks are generally easier to use for more
+  complex button handling (such as doing different actions on hold vs click):
 
-	* 'press' is called when a button is first pressed.
-	* 'click' is called when a button is released, if it wasn't held. 'click'
-	  is called after 'release'.
-	* 'hold' is called if a button is held down.
+	* 'press' is called when a button is first pressed down.
+	* 'click' is called when a button is released after a short press (not held).
+	  The 'click' callback is called after the 'release' callback.
+	* 'hold' is called when a button has been held down longer than the threshold.
 	* 'release' is called when the button is released.
 
 ## Example
 
 ### Basic Usage
 
-```c++
-	Button button(12);
+```cpp
+Button button(12);
 
-	void setup() {
-		Serial.begin(19200);
-	}
+void setup() {
+	Serial.begin(19200);
+}
 
-	void loop() {
-		button.process();
-		if (button.uniquePress()) {
-			Serial.println("Button pressed.");
-		}
+void loop() {
+	button.process();
+	if (button.press()) {
+		Serial.println("Button pressed.");
 	}
+}
 ```
 
 ### Callback Usage
 
-```c++
-	ButtonCB button(12);
+```cpp
+ButtonCB button(12);
 
-	void onPress(const Button& b){
-		Serial.println("Button pressed.");
-	}
+void onPress(const Button& b) {
+	Serial.println("Button pressed.");
+}
 
-	void setup(){
-	  Serial.begin(19200);
-	  button.pressHandler(onPress);
-	}
+void setup() {
+	Serial.begin(19200);
+	button.setPressHandler(onPress);
+}
 
-	void loop(){
-	  button.process();
-	}
+void loop() {
+	button.process();
+}
 ```
