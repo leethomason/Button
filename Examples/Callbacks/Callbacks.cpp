@@ -2,14 +2,15 @@
  *  Demonstration of how to use the button in callback mode.
  */
 
-#include <Button.h>
+#include <button/button.h>
+#include <Arduino.h>
 
 /* Pin, Mode
    - A PULL_DOWN resistor means the button is tied to ground, and the button connects to HIGH on close.
    - A PULL_UP resistor is tied to Vcc, and the button connects to LOW on close.
    - An INTERNAL_PULLUP uses the internal resistor, and the button connects to LOW on close.
 */
-ButtonCB button(8, Button::INTERNAL_PULLUP);
+ButtonCB button(12, Button::INTERNAL_PULLUP);
 
 void doPressHandler(const Button& button) {
   Serial.print("LOG: doPressHandler ");

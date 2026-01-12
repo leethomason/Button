@@ -45,6 +45,7 @@ library is here to help.
 
 ### Basic Usage
 
+```c++
 	Button button(12);
 
 	void setup() {
@@ -57,9 +58,11 @@ library is here to help.
 			Serial.println("Button pressed.");
 		}
 	}
+```
 
 ### Callback Usage
 
+```c++
 	ButtonCB button(12);
 
 	void onPress(const Button& b){
@@ -74,14 +77,4 @@ library is here to help.
 	void loop(){
 	  button.process();
 	}
-
-## Installing
-
-To download. click the "Download Zip" button in the top right corner, rename the uncompressed folder Button.
-
-Place the Buttons library folder your arduinosketchfolder/libraries/ folder. You may need to create the 
-libraries subfolder if its your first library. Restart the IDE.
-
-Or - even better! - navigate to your arduinosketchfolder/libraries/ folder and clone the repro using git.
-
-
+```

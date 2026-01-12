@@ -2,10 +2,11 @@
  *  Demonstration of how to use the button in query mode.
  */
 
-#include <Button.h>
+#include <button/button.h>
+#include <Arduino.h>
 
 
-ButtonCB button(8, Button::INTERNAL_PULLUP);
+ButtonCB button(12, Button::INTERNAL_PULLUP);
 
 void onPress(const Button&) {
   Serial.println("Press.");
